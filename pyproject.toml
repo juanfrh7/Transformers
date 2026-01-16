@@ -5,7 +5,7 @@ description = "Default template for PDM package"
 authors = [
     {name = "Juan Francisco Rodriguez Hernandez", email = "juanfrh7@icloud.com"},
 ]
-dependencies = ["gensim>=4.4.0", "matplotlib>=3.10.8", "numpy>=2.4.1", "ipykernel>=7.1.0", "sklearn>=0.0.post12", "scikit-learn>=1.8.0", "nltk>=3.9.2"]
+dependencies = ["gensim>=4.4.0", "matplotlib>=3.10.8", "numpy>=2.4.1", "ipykernel>=7.1.0", "sklearn>=0.0.post12", "scikit-learn>=1.8.0", "nltk>=3.9.2", "torch>=2.7.1", "torchvision>=0.22.1"]
 requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
