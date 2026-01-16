@@ -6,4 +6,5 @@ It includes Jupyter notebooks for each step of the process, focused on analysis 
 
 To install the dependencies, run:
 
+```bash
 pdm install
