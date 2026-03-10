@@ -16,9 +16,8 @@ def tokenize_word(text):
     return tokens
 
 class word_embedding:
-    def __init__(self, embedding_type="gpt2", embedding_dim=50, seed=42):
+    def __init__(self, embedding_type="gpt2", seed=42):
         self.embedding_type = embedding_type
-        self.embedding_dim = embedding_dim
         self.seed = seed
 
         self.w2v_model = None
@@ -58,7 +57,7 @@ class word_embedding:
             vocab_size = self.tokenizer.n_vocab
 
             # Random embedding layer (NOT pretrained GPT-2)
-            self.embedding_layer = nn.Embedding(vocab_size, self.embedding_dim)
+            self.embedding_layer = nn.Embedding(vocab_size, vocab_size)
             # X = self.embedding_layer(ids)  # (L, D)
             return self.embedding_layer
 
