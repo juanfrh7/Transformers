@@ -1,9 +1,13 @@
-from attention import *
+import torch
+from torch.nn import functional as F
+from .attention import *
 
 
 class GPTLanguageModel(torch.nn.Module):
     def __init__(self, vocab_size, vocab_dim, block_size, num_heads):
         super().__init__()
+        self.block_size = block_size
+        self.num_heads = num_heads
         self.token_embedding_table = torch.nn.Embedding(vocab_size, vocab_dim) # holds semantic value
         self.position_embedding_table = torch.nn.Embedding(1000, vocab_dim) 
         self.lm_head = torch.nn.Linear(vocab_dim, vocab_size)
@@ -31,7 +35,7 @@ class GPTLanguageModel(torch.nn.Module):
         # idx is (B, T) array of indices in the current context
         for _ in range(max_new_tokens):
             # crop idx to the last block size tokens
-            idx_cond = idx[:, -block_size:]
+            idx_cond = idx[:, -self.block_size:]
             # get the predictions
             logits, loss = self(idx)
             # focus only on the last time step
