@@ -61,7 +61,7 @@ class word_embedding:
             # X = self.embedding_layer(ids)  # (L, D)
             return self.embedding_layer
 
-    def decode_ids(self, encoding):
+    def decode(self, encoding):
         """
         Decodes ONLY discrete token ids back to text (GPT-2 case).
         """
