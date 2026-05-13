@@ -3,6 +3,21 @@ import torch.nn as nn
 from torch.nn import functional as F
 torch.manual_seed(42)
 
+class FeedFoward(torch.nn.Module):
+    """ a simple linear layer followed by a non-linearity """
+
+    def __init__(self, n_embd, dropout):
+        super().__init__()
+        self.net = torch.nn.Sequential(
+            torch.nn.Linear(n_embd, 4 * n_embd),
+            torch.nn.ReLU(),
+            torch.nn.Linear(4 * n_embd, n_embd),
+            torch.nn.Dropout(dropout),
+        )
+
+    def forward(self, x):
+        return self.net(x)
+
 class BigramLanguageModel(nn.Module):
 
     def __init__(self, embedding):
