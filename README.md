@@ -1,10 +1,19 @@
 # Transformers
 
-This repository contains my first implementations of transformer models.
+This repository contains first implementations of transformer models, including working modules, notebooks, data assets, and a research paper.
 
-It includes Jupyter notebooks for each step of the process, focused on analysis and visualization. The core components are also provided as modules to make integration easier.
+## Overview
 
-To install the environment, run:
+- `src/transformers/` contains the core model implementations and utility modules.
+- `notebooks/` contains Jupyter notebooks for exploring attention, transformer structure, word embeddings, and the equilateral triangle detection example.
+- `data/` contains training and input data for the example tasks.
+- `papers/` contains supporting bibliography files.
+
+## Setup
+
+To install dependencies, run:
 
 ```bash
 pdm install
+```
+
