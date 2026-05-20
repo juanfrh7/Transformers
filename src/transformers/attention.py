@@ -4,25 +4,27 @@ from torch.nn import functional as F
 class Head(torch.nn.Module):
     """ one head of self attention """
 
-    def __init__(self, vocab_dim, head_size, block_size, dropout=0.1):
+    def __init__(self, emb_dim, head_size, block_size = None, dropout=0.1):
         super().__init__()
-        self.key = torch.nn.Linear(vocab_dim, head_size, bias=False)
-        self.query = torch.nn.Linear(vocab_dim, head_size, bias=False)
-        self.value = torch.nn.Linear(vocab_dim, head_size, bias=False)
-        self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+        self.key = torch.nn.Linear(emb_dim, head_size, bias=False)
+        self.query = torch.nn.Linear(emb_dim, head_size, bias=False)
+        self.value = torch.nn.Linear(emb_dim, head_size, bias=False)
+        self.block_size = block_size
+        if self.block_size is not None:
+            self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x):
 
-        B, T, C = x.shape
-        k = self.key(x)   # (B,T,head_size)
-        q = self.query(x) # (B,T,head_size)
-        v = self.value(x) # (B,T,head_size)
-
-        head_size = k.shape[-1]
+        k = self.key(x)
+        q = self.query(x)
+        v = self.value(x)
 
         weight = torch.matmul(q, k.transpose(-2, -1)) / k.shape[-1]**0.5
-        weight = weight.masked_fill(self.tril[:T, :T] == 0, float('-inf')) # (B, T, T)
+        
+        if self.block_size is not None:
+            T = weight.shape[-1]
+            weight = weight.masked_fill(self.tril[:T, :T] == 0, float('-inf'))
         weight = torch.softmax(weight, dim=-1)
         weight = self.dropout(weight)
 
@@ -33,10 +35,10 @@ class Head(torch.nn.Module):
 class MultiHeadAttention(torch.nn.Module):
     """ multiple heads of self attention in parallel """
 
-    def __init__(self, vocab_dim, head_size, num_heads, block_size, dropout):
+    def __init__(self, emb_dim, head_size, num_heads, block_size = None, dropout=0.1):
         super().__init__()
-        self.heads = torch.nn.ModuleList([Head(vocab_dim, head_size, block_size, dropout) for _ in range(num_heads)])
-        self.proj = torch.nn.Linear(head_size * num_heads, vocab_dim)
+        self.heads = torch.nn.ModuleList([Head(emb_dim, head_size, block_size, dropout) for _ in range(num_heads)])
+        self.proj = torch.nn.Linear(head_size * num_heads, emb_dim)
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, x):

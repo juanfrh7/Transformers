@@ -6,12 +6,19 @@ torch.manual_seed(42)
 class FeedFoward(torch.nn.Module):
     """ a simple linear layer followed by a non-linearity """
 
-    def __init__(self, n_embd, dropout):
+    def __init__(self, n_embd, layer = 'relu', dropout = 0.1):
         super().__init__()
+
+        if layer == 'relu':
+            l = torch.nn.ReLU()
+
+        elif layer == 'gelu':
+            l = torch.nn.GELU()
+
         self.net = torch.nn.Sequential(
-            torch.nn.Linear(n_embd, 4 * n_embd),
-            torch.nn.ReLU(),
-            torch.nn.Linear(4 * n_embd, n_embd),
+            torch.nn.Linear(n_embd, 2 * n_embd),
+            l,
+            torch.nn.Linear(2 * n_embd, n_embd),
             torch.nn.Dropout(dropout),
         )
 
