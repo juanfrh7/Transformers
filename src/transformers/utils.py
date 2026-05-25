@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+torch.manual_seed(42)
 
 ### Language modeling ###
 @torch.no_grad()
@@ -140,3 +141,26 @@ def evaluate(model, X, y, batch_size=64, device=None):
     accuracy = total_correct / total_samples
 
     return avg_loss, accuracy
+
+## Utilities for training and evaluation of vision transformer models with workspace tokens
+class FeedFoward(torch.nn.Module):
+    """ a simple linear layer followed by a non-linearity """
+
+    def __init__(self, n_embd, layer = 'relu', dropout = 0.1):
+        super().__init__()
+
+        if layer == 'relu':
+            l = torch.nn.ReLU()
+
+        elif layer == 'gelu':
+            l = torch.nn.GELU()
+
+        self.net = torch.nn.Sequential(
+            torch.nn.Linear(n_embd, 2 * n_embd),
+            l,
+            torch.nn.Linear(2 * n_embd, n_embd),
+            torch.nn.Dropout(dropout),
+        )
+
+    def forward(self, x):
+        return self.net(x)
