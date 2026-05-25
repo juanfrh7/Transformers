@@ -1,7 +1,8 @@
 import torch
 from torch.nn import functional as F
 from transformers.attention import *
-from transformers.simple_model import FeedFoward
+from transformers.utils import FeedFoward
+torch.manual_seed(42)
 
 class Block(torch.nn.Module):
     def __init__(self, emb_dim, num_heads, head_size, dropout = 0.1):
@@ -19,7 +20,7 @@ class Block(torch.nn.Module):
         self.ln2 = torch.nn.LayerNorm(emb_dim)
 
     def forward(self, x):
-        x = x + self.sa_head(self.ln1(x))
+        x = x + self.sa_head(self.ln1(x), self.ln1(x), self.ln1(x))
         x = x + self.mlp(self.ln2(x))
         return x
 
