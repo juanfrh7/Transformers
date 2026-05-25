@@ -1,5 +1,5 @@
 import torch
-from torch.nn import functional as F
+torch.manual_seed(42)
 
 class Head(torch.nn.Module):
     """ one head of self attention """
@@ -14,11 +14,11 @@ class Head(torch.nn.Module):
             self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
         self.dropout = torch.nn.Dropout(dropout)
 
-    def forward(self, x):
+    def forward(self, q, k, v):
 
-        k = self.key(x)
-        q = self.query(x)
-        v = self.value(x)
+        k = self.key(k)
+        q = self.query(q)
+        v = self.value(v)
 
         weight = torch.matmul(q, k.transpose(-2, -1)) / k.shape[-1]**0.5
         
@@ -41,8 +41,8 @@ class MultiHeadAttention(torch.nn.Module):
         self.proj = torch.nn.Linear(head_size * num_heads, emb_dim)
         self.dropout = torch.nn.Dropout(dropout)
 
-    def forward(self, x):
-        out = torch.cat([h(x) for h in self.heads], dim=-1)
+    def forward(self, q, k, v):
+        out = torch.cat([h(q, k, v) for h in self.heads], dim=-1)
         out = self.proj(out)
         out = self.dropout(out)
         return out
