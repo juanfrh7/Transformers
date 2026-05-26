@@ -1,5 +1,23 @@
 import torch
-torch.manual_seed(42)
+from models.utils import FeedFoward
+
+class Block(torch.nn.Module):
+    def __init__(self, emb_dim, num_heads, head_size, dropout = 0.1):
+        super().__init__()
+        self.ln1 = torch.nn.LayerNorm(emb_dim)
+        self.sa_head = MultiHeadAttention(emb_dim=emb_dim, 
+                                          head_size=head_size, 
+                                          num_heads=num_heads, 
+                                          block_size=None, 
+                                          dropout=dropout)
+        self.mlp = FeedFoward(emb_dim, 'gelu', dropout)
+        self.ln1 = torch.nn.LayerNorm(emb_dim)
+        self.ln2 = torch.nn.LayerNorm(emb_dim)
+
+    def forward(self, x):
+        x = x + self.sa_head(self.ln1(x), self.ln1(x), self.ln1(x))
+        x = x + self.mlp(self.ln2(x))
+        return x
 
 class Head(torch.nn.Module):
     """ one head of self attention """
@@ -42,7 +60,7 @@ class MultiHeadAttention(torch.nn.Module):
         self.dropout = torch.nn.Dropout(dropout)
 
     def forward(self, q, k, v):
-        out = torch.cat([h(q, k, v) for h in self.heads], dim=-1)
+        out = torch.cat([h.forward(q, k, v) for h in self.heads], dim=-1)
         out = self.proj(out)
         out = self.dropout(out)
         return out

@@ -12,8 +12,6 @@ from nltk.tokenize import word_tokenize
 nltk.download('punkt_tab')
 nltk.download('stopwords') 
 
-torch.manual_seed(42)
-
 def tokenize_word(text):
     stop_words = set(stopwords.words("english"))
     tokens = word_tokenize(text.lower())

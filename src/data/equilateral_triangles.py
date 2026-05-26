@@ -1,4 +1,6 @@
 import numpy as np
+from pathlib import Path
+import os
 
 def rotation_matrix(theta):
     """2D rotation matrix."""
@@ -189,3 +191,56 @@ def generate_dataset(
     perm = rng.permutation(n_samples)
 
     return X[perm], y[perm], centers_all[perm]
+
+
+if __name__ == "__main__":
+    output_path = Path(str(os.getcwd()) + "/data/equilateral_triangles")
+    seed = 42
+    image_size = 64 # Size of the generated images (64x64 pixels)
+    n_train_samples = 5000 # Total number of training samples, 50k in goyal
+    n_val_samples = 1000 # Total number of validation samples, 10k in goyal
+    n_test_samples = 1000 # Total number of test samples, 10k in goyal
+
+    X_train, y_train, centers_train = generate_dataset(
+        n_samples=n_train_samples,
+        image_size=image_size,
+        seed=seed)
+
+    X_val, y_val, centers_val = generate_dataset(
+        n_samples=n_val_samples,
+        image_size=image_size,
+        seed=seed)
+
+    X_test, y_test, centers_test = generate_dataset(
+        n_samples=n_test_samples,
+        image_size=image_size,
+        seed=seed)
+
+    print("Train images:", X_train.shape)
+    print("Train labels:", y_train.shape)
+    print("Validation images:", X_val.shape)
+    print("Validation labels:", y_val.shape)
+    print("Test images:", X_test.shape)
+    print("Test labels:", y_test.shape)
+
+
+    print("Train positive examples:", np.sum(y_train == 1))
+    print("Train negative examples:", np.sum(y_train == 0))
+
+    print("Val positive examples:", np.sum(y_val == 1))
+    print("Val negative examples:", np.sum(y_val == 0))
+
+    print("Test positive examples:", np.sum(y_test == 1))
+    print("Test negative examples:", np.sum(y_test == 0))
+
+    np.save(output_path / "X_train.npy", X_train)
+    np.save(output_path / "y_train.npy", y_train)
+    np.save(output_path / "centers_train.npy", centers_train)
+
+    np.save(output_path / "X_val.npy", X_val)
+    np.save(output_path / "y_val.npy", y_val)
+    np.save(output_path / "centers_val.npy", centers_val)
+
+    np.save(output_path / "X_test.npy", X_val)
+    np.save(output_path / "y_test.npy", y_val)
+    np.save(output_path / "centers_test.npy", centers_val)
