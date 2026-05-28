@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import random
+import pandas as pd
 
 ### Language modeling ###
 @torch.no_grad()
@@ -146,7 +147,7 @@ def evaluate(model, X, y, batch_size=64, device=None):
 class FeedFoward(torch.nn.Module):
     """ a simple linear layer followed by a non-linearity """
 
-    def __init__(self, n_embd, layer = 'relu', dropout = 0.1):
+    def __init__(self, emb_dim, ffn_dim, layer = 'relu', dropout = 0.1):
         super().__init__()
 
         if layer == 'relu':
@@ -156,15 +157,14 @@ class FeedFoward(torch.nn.Module):
             l = torch.nn.GELU()
 
         self.net = torch.nn.Sequential(
-            torch.nn.Linear(n_embd, 2 * n_embd),
+            torch.nn.Linear(emb_dim, ffn_dim),
             l,
-            torch.nn.Linear(2 * n_embd, n_embd),
+            torch.nn.Dropout(dropout),
+            torch.nn.Linear(ffn_dim, emb_dim),
             torch.nn.Dropout(dropout),
         )
-
     def forward(self, x):
         return self.net(x)
-    
 
 def set_seed(seed):
 
@@ -174,3 +174,36 @@ def set_seed(seed):
 
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(seed)
+
+### Saving results
+def merge_and_overwrite(existing_path, new_df, key_cols):
+    """
+    Merge new_df with an existing CSV file.
+
+    If existing_path exists:
+        - load existing rows
+        - remove rows whose key appears in new_df
+        - append new_df
+        - save merged result
+
+    If existing_path does not exist:
+        - save new_df directly
+    """
+
+    if existing_path.exists():
+        existing_df = pd.read_csv(existing_path)
+
+        existing_keys = existing_df[key_cols].astype(str).agg("_".join, axis=1)
+        new_keys = new_df[key_cols].astype(str).agg("_".join, axis=1)
+
+        existing_df = existing_df[~existing_keys.isin(set(new_keys))]
+
+        merged_df = pd.concat([existing_df, new_df], ignore_index=True)
+
+    else:
+        merged_df = new_df.copy()
+
+    merged_df = merged_df.sort_values(key_cols).reset_index(drop=True)
+    merged_df.to_csv(existing_path, index=False)
+
+    return merged_df
