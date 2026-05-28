@@ -1,0 +1,2 @@
+model,mean_test_acc,std_test_acc,mean_test_loss,std_test_loss,mean_val_acc,std_val_acc,mean_val_loss,std_val_loss
+ViT,0.662,0.01886796226411321,0.6177483078092336,0.018995317249457327,0.6564,0.030802597293085557,0.6187846191227436,0.0166868203613803
