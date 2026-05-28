@@ -1,0 +1,16 @@
+{
+    "emb_dim": 256,
+    "ffn_dim": 512,
+    "num_heads": 4,
+    "head_size_k": 64,
+    "head_size_v": 64,
+    "num_layer": 4,
+    "dropout": 0.2,
+    "learning_rate": 0.0001,
+    "epochs": 200,
+    "batch_size": 64,
+    "num_patches": 256,
+    "patch_size": 4,
+    "seeds": [0, 1, 2, 3, 4],
+    "experiment_num": 1
+}

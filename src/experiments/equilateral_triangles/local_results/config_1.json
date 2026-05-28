@@ -1,0 +1,21 @@
+{
+    "emb_dim": 64,
+    "ffn_dim": 128,
+    "num_heads": 4,
+    "head_size_k": 32,
+    "head_size_v": 64,
+    "num_workspace_slots": [2, 4, 8, 16, 32],
+    "num_layers": 4,
+    "dropout": 0.2,
+    "learning_rate": 0.0001,
+    "epochs": 150,
+    "batch_size": 32,
+    "num_patches": 256,
+    "patch_size": 4,
+    "seeds": [0],
+    "experiment_num": 1,
+    "num_train_per_class": 1000,
+    "num_val_per_class": 250,
+    "num_test_per_class": 250
+}
+
